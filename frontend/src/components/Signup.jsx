@@ -23,7 +23,7 @@ export default function Signup() {
             password: data.password,
         }
         await axios
-            .post("https://bookstoreapp-backend-zvfh.onrender.com/user/signup", userInfo)
+            .post("https://bookstoreapp-backend-azv9.onrender.com/user/signup", userInfo)
             .then((res) => {
                 console.log("res.data ", res.data)
                 if (res.data) {

@@ -9,7 +9,7 @@ const [book, setBook] = useState([]);
 useEffect(() => {
   const getBook = async() => {
     try{
-      const res = await axios.get("https://bookstoreapp-backend-zvfh.onrender.com/book");
+      const res = await axios.get("https://bookstoreapp-backend-azv9.onrender.com/book");
       console.log(res.data)
       setBook(res.data)
     } catch (error) {
