@@ -15,7 +15,7 @@ export default function Contactustool() {
       }
   return (
     <div className='max-w-screen-2xl container mx-auto md:px-20 px-4 '>
-      <div className='mt-28 mb-16 items-center flex justify-center text-center'>
+      <div className='pt-[100px] mb-16 items-center flex justify-center text-center'>
         <form onSubmit={handleSubmit(onSubmit)} className='p-5'>
         <h3 className="font-bold text-2xl text-start ">Contact us</h3>
         

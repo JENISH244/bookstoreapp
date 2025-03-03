@@ -1,0 +1,11 @@
+import Bookapp from "../model/Book.model.js";
+
+export const getBook = async (req, res) => {
+    try{
+        const book = await Bookapp.find()
+        res.status(200).json(book)
+    } catch (error) {
+        console.log("Error:", error);
+        res.status(500).json(error);
+    }
+}

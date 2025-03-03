@@ -1,10 +1,14 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Login from './Login'
 import { useForm } from 'react-hook-form';
+import axios from 'axios';
+import toast from 'react-hot-toast';
 
 export default function Signup() {
-
+    const location = useLocation();
+    const navigate = useNavigate()
+    const from = location.state?.form?.pathname || "/"
     const {
         register,
         handleSubmit,
@@ -12,15 +16,50 @@ export default function Signup() {
         reset,
         formState: { errors },
     } = useForm();
-    const onSubmit = (data) => {
-        console.log(data),
-        reset()
+    const onSubmit = async (data) => {
+        const userInfo = {
+            fullname: data.fullname,
+            email: data.email,
+            password: data.password,
+        }
+        await axios
+            .post("http://localhost:4001/user/signup", userInfo)
+            .then((res) => {
+                console.log("res.data ", res.data)
+                if (res.data) {
+                    toast.success('Signup Successfully');
+                    navigate(from,{replace:true})
+                }
+                localStorage.setItem("Users", JSON.stringify(res.data.user))
+            })
+            .catch((error) => {
+                if (error.response) {
+                    console.log(error)
+                    toast.error("Error : " + error.response.data.message);
+                }
+            })
+        // reset()
+
     }
+    const [theme, setTheme] = useState(localStorage.getItem("theme") ? localStorage.getItem("theme") : "light")
+    const element = document.documentElement;
+    useEffect(() => {
+        if (theme === "dark") {
+            element.classList.add("dark");
+            localStorage.setItem("theme", "dark")
+            document.body.classList.add("dark");
+        } else {
+            element.classList.remove("dark");
+            localStorage.setItem("theme", "light")
+            document.body.classList.remove("dark");
+
+        }
+    }, [theme])
     return (
         <>
             <div className='flex h-screen items-center justify-center '>
                 <div className="w-[500px]">
-                    <div className="modal-box border-[2px] shadow-md p-5 rounded-md">
+                    <div className="modal-box border-[2px] shadow-md p-5 rounded-md dark:bg-[#25252C]">
                         <form onSubmit={handleSubmit(onSubmit)} method="dialog">
                             {/* if there is a button in form, it will close the modal */}
                             <Link to="/" className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 ">✕</Link>
@@ -28,7 +67,7 @@ export default function Signup() {
                             <div className='mt-4 space-y-2'>
                                 <span>Name</span>
                                 <br />
-                                <input type='text' placeholder='Enter your Name' {...register("name", { required: true })} className='w-80 px-3 py-1 border rounded-md outline-none' />
+                                <input type='text' placeholder='Enter your Name' {...register("fullname", { required: true })} className='w-80 px-3 py-1 border rounded-md outline-none text-black' />
                                 <br />
                                 {errors.name && <span className='text-sm text-red-500'>This field is required</span>}
                             </div>
@@ -36,7 +75,7 @@ export default function Signup() {
                             <div className='mt-4 space-y-2'>
                                 <span>Email</span>
                                 <br />
-                                <input type='email' placeholder='Enter your email' {...register("email", { required: true })} className='w-80 px-3 py-1 border rounded-md outline-none' />
+                                <input type='email' placeholder='Enter your email' {...register("email", { required: true })} className='w-80 px-3 py-1 border rounded-md outline-none  text-black' />
                                 <br />
                                 {errors.email && <span className='text-sm text-red-500'>This field is required</span>}
                             </div>
@@ -44,7 +83,7 @@ export default function Signup() {
                             <div className='mt-4 space-y-2'>
                                 <span>Password</span>
                                 <br />
-                                <input type='password' placeholder='Enter yout password' {...register("password", { required: true })} className='w-80 px-3 py-1 border rounded-md outline-none' />
+                                <input type='password' placeholder='Enter yout password' {...register("password", { required: true })} className='w-80 px-3 py-1 border rounded-md outline-none text-black' />
                                 <br />
                                 {errors.password && <span className='text-sm text-red-500'>This field is required</span>}
                             </div>

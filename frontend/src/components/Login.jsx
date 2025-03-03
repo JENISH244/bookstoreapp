@@ -1,6 +1,8 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { useForm } from "react-hook-form"
+import axios from 'axios';
+import toast from 'react-hot-toast';
 export default function Login() {
     const {
         register,
@@ -8,11 +10,36 @@ export default function Login() {
         watch,
         formState: { errors },
       } = useForm();
-      const onSubmit = (data) => console.log(data)
+      const onSubmit = async (data) => {
+        const userInfo = {
+            email: data.email,
+            password: data.password,
+        }
+        await axios.post("http://localhost:4001/user/login", userInfo)
+        .then((res) => {
+            console.log("res.data ", res.data)
+            if(res.data) {
+                toast.success('Loggedin Successfully');
+                document.getElementById("my_modal_3").close()
+                setTimeout(() => {
+                    window.location.reload()
+                    localStorage.setItem("Users",JSON.stringify(res.data.user))
+                },3000)
+            }
+        })
+        .catch((error) => {
+            if(error.response) {
+                console.log("error",error)
+            toast.error("Error: "+error.response.data.message);
+            setTimeout(() => {},3000)
+            }
+        })
+        // reset()
+      }
     return (
-        <div>
+        <div >
             <dialog id="my_modal_3" className="modal">
-                <div className="modal-box">
+                <div className="modal-box dark:bg-[#25252C]">
                     <form onSubmit={handleSubmit(onSubmit)} method="dialog">
                         {/* if there is a button in form, it will close the modal */}
                         <Link
@@ -27,7 +54,7 @@ export default function Login() {
                     <div className='mt-4 space-y-2'>
                         <span>Email</span>
                         <br />
-                        <input type='email' placeholder='Enter yout email' {...register("email", {required: true})} className='w-80 px-3 py-1 border rounded-md outline-none'/>
+                        <input type='email' placeholder='Enter yout email' {...register("email", {required: true})} className='w-80 px-3 py-1 border rounded-md outline-none text-black'/>
                         <br />
                         {errors.email && <span className='text-sm text-red-500'>This field is required</span>}
                     </div>
@@ -35,7 +62,7 @@ export default function Login() {
                     <div className='mt-4 space-y-2'>
                         <span>Password</span>
                         <br />
-                        <input type='text' placeholder='Enter yout password' {...register("password", {required: true})} className='w-80 px-3 py-1 border rounded-md outline-none'/>
+                        <input type='text' placeholder='Enter yout password' {...register("password", {required: true})} className='w-80 px-3 py-1 border rounded-md outline-none text-black'/>
                         <br />
                         {errors.password && <span className='text-sm text-red-500'>This field is required</span>}
                     </div>
