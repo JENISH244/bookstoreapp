@@ -21,10 +21,7 @@ const URl = process.env.Mongodb;
 
 //connect Mongodb
 try{
-    mongoose.connect(URl, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+    mongoose.connect(URl);
     console.log('Connected to MongoDB')
 
 } catch(error) {
